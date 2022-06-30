@@ -5,23 +5,34 @@ import java.util.regex.Pattern
 
 class CustomNormalizer {
 
+    private val alphaNumericRegex: Regex = "[^a-zA-z\\d\\s]".toRegex()
+    private val withoutPrepositionsRegex: Regex = "(?:\\s+DAS|DOS|DA|DO|DE\\s+)".toRegex()
+    private val uniqueSpaceRegex: Regex = "\\s\\s+".toRegex()
+
     fun normalize(field: String): String {
         val fieldWithoutCarets = removeCarets(field)
-        val fieldWithoutSpecialCaracters = removeSpecialCaracters(fieldWithoutCarets)
-
-        return fieldWithoutSpecialCaracters
+        val fieldWithoutSpecialCaracters = removeSpecialCharacters(fieldWithoutCarets)
+        val fieldCapitalized = fieldWithoutSpecialCaracters.uppercase()
+        val fieldWithoutPrepositions = removePrepositions(fieldCapitalized)
+        return removeDuplicatedSpaces(fieldWithoutPrepositions)
     }
 
     fun removeCarets(field: String): String {
-        var nfdNormalizedString: String = Normalizer.normalize(field, Normalizer.Form.NFD)
+        var caretNormalizedString: String = Normalizer.normalize(field, Normalizer.Form.NFD)
         var pattern: Pattern= Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
 
-        return pattern.matcher(nfdNormalizedString).replaceAll("")
+        return pattern.matcher(caretNormalizedString).replaceAll("")
     }
 
-    fun removeSpecialCaracters(field: String): String {
-        var regex: Regex = "[^a-zA-z\\d\\s]".toRegex()
+    fun removeSpecialCharacters(field: String): String {
+        return field.replace(alphaNumericRegex, "")
+    }
 
-        return field.replace(regex, "")
+    fun removePrepositions(field: String): String {
+        return field.replace(withoutPrepositionsRegex, " ")
+    }
+
+    fun removeDuplicatedSpaces(field: String): String {
+        return field.replace(uniqueSpaceRegex, " ")
     }
 }
