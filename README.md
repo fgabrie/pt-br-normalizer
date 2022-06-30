@@ -14,6 +14,6 @@ Normalizer for brazilian portuguese.
    1. Example: "AEIOU AEIOU AA        UU EE" would become "AEIOU AEIOU AA UU EE"
 
 ## Stack
-:paperclip: maven
+:paperclip: maven \
 :loudspeaker: Kotlin
 
